@@ -55,7 +55,7 @@ void showMenu() {
     cout << left << setw(6) << "Code"
          << setw(15) << "Name"
          << setw(12) << "Category"
-         << setw(8) << "Price"
+         << setw(10) << "Price"
          << "Stock\n";
 
     for (auto& entry : items) {                  // Loop through each product
@@ -81,7 +81,7 @@ void insertMoney() {
     if (!cin) {                             // Handle invalid input
         cin.clear();                        // Clear error state
         cin.ignore(numeric_limits<streamsize>::max(), '\n');             // Remove invalid caracters
-        cout << "Invalid input.\n";
+        cout << "Invalid input. Please enter a number. \n";
         return;
 
     }
@@ -99,13 +99,14 @@ void insertMoney() {
 }
 // Add an item to the cart (BUY PRODUCT)
 void addItemToCart() {
-    string code;                              // Store product code
-    cout << "Enter product code to buy: ";
+    showMenu();
+    string code;                             // Store product code
+    cout << "Enter product code (e.g. H01, C01, S02): ";
     cin >> code;
 
     // Check if product code exists
     if (!items.count(code)) {                   
-        cout << "Invalid product code.\n" ;
+        cout << "Invalid product code. \n";
         return;
     }
 
@@ -126,9 +127,7 @@ void addItemToCart() {
          << " (" << formatMoney(p.price) << ")\n";   
     
     cout << "\n--- Recommended Item ---\n";
-    showSuggestion(code);   
-    cout << "-------------------------\n";                          
-    showMenu();                                        // Show update stock
+    showSuggestion(code); 
 
 }
 
@@ -139,9 +138,6 @@ void showSuggestion(const string& code) {
 
     else if (code == "C01" || code == "C02")   
         cout << "Suggestion: Quavers go well with your cold drink.\n";
-    
-    else if (code == "S02")
-        cout << "Suggestion: Try a Chai Latte with Digestives.\n";
     
 }
 
@@ -157,7 +153,6 @@ int calculateSubtotal() {
 // Calculates available discounts
 int calculateDiscount() {
     int discount = 0;                             // Start with 0 discount
-
     if ((count(cart.begin(), cart.end(), "H01") +
          count(cart.begin(), cart.end(), "H02")) > 0 &&
         count(cart.begin(), cart.end(), "S02") > 0)
@@ -165,7 +160,7 @@ int calculateDiscount() {
     return discount;
 }
 
-// Displays cart contents 
+// Show cart
 void showCart() {
     if (cart.empty()) {                            
         cout << "Cart is empty.\n";
@@ -180,14 +175,12 @@ void showCart() {
 
     int subtotal = calculateSubtotal();              // This calculates the total price of the item before discount
     int discount = calculateDiscount();             // This calculates the available discount
-    
     cout << "Subtotal: " << formatMoney(subtotal) << "\n";
     cout << "Discount: " << formatMoney(discount) << "\n";
-    cout << "Total: "    
-         << formatMoney(subtotal - discount) << "\n";
+    cout << "Total: " << formatMoney(subtotal - discount) << "\n";
 
 }
-// Handles checkout process
+// Checkout 
 void checkout() {
     if (cart.empty()) {
         cout << "Cart is empty.\n";
@@ -215,8 +208,7 @@ void checkout() {
 // Returns change to the user
 void giveChange() {
     if (balancePence > 0) {                             
-        cout << "Change returned: "
-             << formatMoney(balancePence) << "\n";                  // Formats pence value into moneytary string (GBP X.XX)
+        cout << "Change returned: " << formatMoney(balancePence) << "\n";                  // Formats pence value into moneytary string (GBP X.XX)
         balancePence = 0;
     
     }
@@ -241,6 +233,7 @@ void run() {
             if (!cin){
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cout << "Invalid menu option. \n";
                 continue;
             }
         
@@ -250,8 +243,7 @@ void run() {
                 case 3: addItemToCart(); break;
                 case 4: showCart(); break;               
                 case 5: checkout(); break;
-                case 6: cout << "Thank you for using the vending machine.\n";
-                        break;
+                case 6: cout << "Thank you for using the vending machine.\n"; break;
                 default: cout << "Invalid option.\n";
             }
         } while (choice != 6);
